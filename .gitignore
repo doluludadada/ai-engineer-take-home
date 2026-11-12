@@ -1,0 +1,30 @@
+# 給自己看的完成報告與工作紀錄，不繳交
+REPORT.zh-TW.md
+decisions.tsv
+
+# 公司寄來的題目原檔，不放進公開 repo
+筆試_AI開發工程師_*.pdf
+
+# Python 與工具產生的檔案
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# 本機 demo 產生的資料庫與金鑰
+*.db
+*.sqlite
+*.sqlite3
+
+# 交卷前的準備筆記，不繳交
+PREP.zh-TW.md
+
+# 11/6 AI 第一版的題 4、題 5，留底用，不繳交
+_ai_first_version/
+.ruff_cache/
+
+# Local secrets, keys and SQLite side files
+.env
+*.pem
+*.db-wal
+*.db-shm

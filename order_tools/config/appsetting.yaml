@@ -1,0 +1,59 @@
+# Settings of the order tool server.
+# A value that differs per deployment (the database file, the SSO public key, iss, aud, the listen address) is set with
+# the environment variable ORDER_TOOLS_<NAME>, which wins over this file.
+# The sentences written for the model (tool and argument descriptions, refusals) are under `texts`, so the wording
+# changes without a code change.
+
+server_name: order-tools
+transport: streamable-http
+host: 127.0.0.1
+port: 8000
+
+db: orders.db
+db_busy_timeout_seconds: 5
+
+# The one signature algorithm a token may use. Only the asymmetric RS256, RS384 and RS512 can be named here, so this
+# file cannot switch the check to an unsigned token or a shared secret.
+jwt_algorithm: RS256
+jwt_leeway_seconds: 30
+
+list_default_limit: 10
+request_id_header: x-request-id
+request_id_max_length: 128
+
+masking:
+  mask_character: "*"
+  hidden_text: "***"
+  phone_visible_digits: 3
+  # Only what the two groups capture stays readable: the city or county, and the district. An address that does not
+  # start this way is replaced whole by hidden_text. A district may end in 鎮區 or 市區 (前鎮區, 新市區), and what
+  # comes before the ending may not be a street word. A street or market whose own name starts like a district
+  # (新市一路, 東門市場) still shows those two or three characters: telling them apart needs a list of districts.
+  address_area_pattern: '^\s*\d*\s*(?P<city>\S{2}[縣市])(?P<district>\S{1,3}?(?<![路街道段巷弄號\d])(?:[區鄉]|[鎮市]區?))'
+
+texts:
+  server_instructions: >-
+    訂單工具。操作者身分一律取自請求附帶的 SSO 權杖，工具參數裡沒有、也不接受使用者編號。
+    錯誤會以 structuredContent.error.code 回傳：UNAUTHENTICATED、NOT_FOUND、NOT_CANCELLABLE、
+    REASON_REQUIRED。參數不符合輸入 schema 時，MCP 會在工具執行前直接回錯誤文字，沒有 code。
+  get_order_description: >-
+    查詢一筆訂單的狀態、金額與收件人。會員只能查自己的訂單，客服可查任何訂單。
+    查無訂單或無權查看都回 NOT_FOUND。收件人姓名、電話、地址、Email 已遮罩。
+  list_my_orders_description: 列出目前登入者自己的訂單，由新到舊。只能列自己的訂單。不含收件人資料。
+  cancel_order_description: >-
+    取消一筆待付款或已付款的訂單。重複呼叫是安全的：已取消的訂單回傳原本那次取消的資訊，
+    already_cancelled 為 true，不會再取消一次。已出貨或已送達回 NOT_CANCELLABLE，
+    請改走退貨流程。客服人員必須填寫 reason，否則回 REASON_REQUIRED。
+  order_id_argument: 訂單編號，格式為 ORD- 加 6 位數字，例如 ORD-100001。
+  limit_argument: 最多回傳幾筆。
+  reason_argument: 取消原因。客服人員必填；會員可省略。請勿填入電話、地址等個資。
+  # What a tool answers when it refuses a request, by error code.
+  refusals:
+    unauthenticated: 需要有效的登入身分。
+    not_found: 找不到這筆訂單。
+    not_cancellable: 這筆訂單目前的狀態無法取消。
+    reason_required: 客服人員取消訂單時必須填寫取消原因（reason）。
+  # A more exact answer for a refused cancel, by the order's status. A status not listed gets not_cancellable above.
+  not_cancellable:
+    shipped: 訂單已出貨，無法取消。請引導使用者在收到商品後申請退貨。
+    delivered: 訂單已送達，無法取消。請引導使用者改走退貨流程。

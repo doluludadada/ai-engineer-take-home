@@ -1,0 +1,37 @@
+{
+  "protected_patterns": [
+    "(?i)(?<![0-9A-Za-z])(?:ORD|SKU)-[0-9A-Za-z-]+",
+    "(?<![0-9A-Za-z])20\\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\\d|3[01])\\d{4,11}(?![0-9A-Za-z])"
+  ],
+  "card_prefixes_without_check_digit": [
+    "62"
+  ],
+  "amount_markers_before": [
+    "$",
+    "NTD",
+    "TWD",
+    "金額",
+    "總計",
+    "合計"
+  ],
+  "amount_markers_after": [
+    "元"
+  ],
+  "amount_marker_window": 8,
+  "business_id_labels": [
+    "訂單編號",
+    "訂單號碼",
+    "商品編號",
+    "單號",
+    "貨號"
+  ],
+  "contact_labels": [
+    "電話",
+    "手機",
+    "聯絡",
+    "tel",
+    "phone"
+  ],
+  "label_breaks": ",;!?。、",
+  "label_window": 12
+}

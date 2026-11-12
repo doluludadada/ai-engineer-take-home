@@ -1,0 +1,25 @@
+{
+  "model_alias": "chat-default",
+  "timeout_seconds": 30,
+  "max_retries": 2,
+  "max_steps": 5,
+  "order_id_pattern": "^[A-Z][0-9]{4,12}$",
+  "texts": {
+    "system_prompt": "你是訂單助理，只能協助目前登入的會員查詢或取消他自己的訂單。取消前先向使用者複述訂單編號並取得確認。工具回傳錯誤時照實告知使用者，不要猜測訂單內容。",
+    "fallback_reply": "抱歉，目前無法完成這個請求，請稍後再試或聯繫客服。",
+    "order_id": "訂單編號，一個大寫英文字母加 4 到 12 位數字，例如 A1001",
+    "tools": {
+      "get_order": "查詢目前登入會員自己的一筆訂單，回傳狀態、金額與建立時間。",
+      "cancel_order": "取消目前登入會員自己的一筆訂單。只有待付款或已付款、尚未出貨的訂單可以取消。呼叫前必須先向使用者確認。"
+    },
+    "cancel_messages": {
+      "cancelled": "訂單已取消。",
+      "already_cancelled": "這筆訂單先前已經取消，沒有重複執行。",
+      "not_cancellable": "訂單已出貨或已送達，無法取消，請改走退貨流程。"
+    },
+    "unknown_tool": "沒有名為 {name} 的工具。",
+    "invalid_arguments": "參數格式不正確。",
+    "tool_failed": "系統暫時無法處理，請稍後再試。",
+    "not_found": "查無此訂單，或這筆訂單不屬於您。"
+  }
+}
